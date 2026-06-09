@@ -37,6 +37,7 @@ services:
 
     volumes:
       - ps_data:/var/www/html
+      - ./productbadges_module:/var/www/html/modules/productbadges_module
 
 volumes:
   db_data:
