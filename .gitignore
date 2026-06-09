@@ -1,0 +1,15 @@
+# PrestaShop core (NO subir)
+prestashop/
+
+# DB / volumes / runtime
+db_data/
+ps_data/
+var/
+vendor/
+cache/
+logs/
+
+# IDE
+.vscode/
+.idea/
+.DS_Store
