@@ -13,12 +13,12 @@ docker compose up -d
 * Una vez hayamos levantado los contenedores, validaremos accediendo a:
 [localhost](http://localhost:8080)
 
-* Continuaremos los pasos de la instalación, siguiendo la guía que proporciona la interfaz, no hace falta introducir ningún dato a parte de los evidentes como email, nombre de la tiend, password...
+* Continuaremos los pasos de la instalación, siguiendo la guía que proporciona la interfaz, no hace falta introducir ningún dato a parte de los evidentes como email, nombre de la tienda, password...
 * En cuanto a la configuración de la base de datos:
-  * Indica en dirección del servidor db (así se le llama en el docker-compose.yml, sé consecuente si lo cambias).
+  * Indica en __dirección del servidor__ **db** (así se le llama en el docker-compose.yml, sé consecuente si lo cambias).
   * Nombre de base de datos, usuario y contraseña indicado en el docker-compose.yml
 
-* Para poder enetrar a la consola de administrador de la tienda, prestashop requiere cierts requisitos, como eliminar la carpeta /install generada. Como estaos trabajando en un contenedor deberemos eliminarla desde su interior.
+* Para poder entrar a la consola de administrador de la tienda, prestashop requiere ciertos requisitos, como eliminar la carpeta /install generada. Como estamos trabajando en un contenedor, deberemos eliminarla desde su interior:
   * Borraremos la carpeta del interior del contenedor **(si has llamado a tu contenedor de otra forma, cambia el comando)** :
 ```bash
 docker exec -it prestashop-app rm -rf /var/www/html/install
