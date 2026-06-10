@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+  <!-- Etiqueta -->
+  <path d="M4 10 L26 10 L36 20 L26 30 L4 30 Z" fill="#E53935"></path>
+
+  <!-- Agujero -->
+  <circle cx="9" cy="20" r="2" fill="#FFFFFF"></circle>
+
+  <!-- Texto -->
+  <text x="21" y="23" font-family="Arial, sans-serif" font-size="8" font-weight="bold" text-anchor="middle" fill="#FFFFFF">
+    NEW
+  </text>
+</svg>
