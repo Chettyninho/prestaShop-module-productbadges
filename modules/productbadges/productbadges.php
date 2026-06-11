@@ -49,62 +49,35 @@ class ProductBadges extends Module
     // =========================
     // BACK OFFICE CONFIG
     // =========================
-    public function getContent()
+   public function getContent()
     {
-        $output = '';
+        $totalBadges = (int) Db::getInstance()->getValue(
+            'SELECT COUNT(*) FROM `'._DB_PREFIX_.'product_badges`'
+        );
 
-        if (Tools::isSubmit('submit' . $this->name)) {
-            $text = Tools::getValue('PRODUCTBADGES_TEXT');
+        $activeBadges = (int) Db::getInstance()->getValue(
+            'SELECT COUNT(*) FROM `'._DB_PREFIX_.'product_badges` WHERE active = 1'
+        );
 
-            if (!$text) {
-                $output .= $this->displayError($this->l('Badge text required.'));
-            } else {
-                Configuration::updateValue('PRODUCTBADGES_TEXT', $text);
-                $output .= $this->displayConfirmation($this->l('Saved successfully.'));
-            }
-        }
+        $inactiveBadges = $totalBadges - $activeBadges;
 
-        return $output . $this->renderForm();
-    }
+        $badges = Db::getInstance()->executeS(
+            'SELECT name, type, color, active, date_add
+            FROM `'._DB_PREFIX_.'product_badges`
+            ORDER BY date_add DESC'
+        );
 
-    protected function renderForm()
-    {
-        $fields_form = [
-            'form' => [
-                'legend' => [
-                    'title' => $this->l('Settings'),
-                    'icon' => 'icon-cogs'
-                ],
-                'input' => [
-                    [
-                        'type' => 'text',
-                        'label' => $this->l('Badge text'),
-                        'name' => 'PRODUCTBADGES_TEXT',
-                        'required' => true,
-                    ],
-                ],
-                'submit' => [
-                    'title' => $this->l('Save'),
-                    'class' => 'btn btn-primary pull-right'
-                ]
-            ]
-        ];
+        $this->context->smarty->assign([
+            'totalBadges' => $totalBadges,
+            'activeBadges' => $activeBadges,
+            'inactiveBadges' => $inactiveBadges,
+            'badges' => $badges,
+        ]);
 
-        $helper = new HelperForm();
-
-        $helper->module = $this;
-        $helper->name_controller = $this->name;
-        $helper->token = Tools::getAdminTokenLite('AdminModules');
-        $helper->currentIndex = AdminController::$currentIndex . '&configure=' . $this->name;
-
-        $helper->default_form_language = (int) Configuration::get('PS_LANG_DEFAULT');
-        $helper->allow_employee_form_lang = (int) Configuration::get('PS_LANG_DEFAULT');
-
-        $helper->submit_action = 'submit' . $this->name;
-
-        $helper->fields_value['PRODUCTBADGES_TEXT'] = Configuration::get('PRODUCTBADGES_TEXT');
-
-        return $helper->generateForm([$fields_form]);
+        return $this->display(
+            __FILE__,
+            'views/templates/admin/dashboard.tpl'
+        );
     }
 
     // =========================
@@ -119,21 +92,4 @@ class ProductBadges extends Module
         );
     }
 
-    // =========================
-    // BADGE EN PRODUCT LIST
-    // =========================
-    public function hookDisplayProductListFunctionalButtons($params)
-    {
-        $text = Configuration::get('PRODUCTBADGES_TEXT');
-
-        if (!$text) {
-            return '';
-        }
-
-        return '
-            <span class="product-badge">
-                ' . htmlspecialchars($text, ENT_QUOTES, 'UTF-8') . '
-            </span>
-        ';
-    }
 }
