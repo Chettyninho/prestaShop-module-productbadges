@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/classes/ProductBadge.php';
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -24,15 +25,25 @@ class ProductBadges extends Module
 
     public function install()
     {
-        return parent::install()
-            && $this->registerHook('displayProductListFunctionalButtons')
+        if (!parent::install()) {
+            return false;
+        }
+
+        if (!include(dirname(__FILE__).'/sql/install.php')) {
+            return false;
+        }
+
+        return $this->registerHook('displayProductListFunctionalButtons')
             && $this->registerHook('displayHeader');
     }
 
     public function uninstall()
     {
-        return parent::uninstall()
-            && Configuration::deleteByName('PRODUCTBADGES_TEXT');
+        if (!include(dirname(__FILE__).'/sql/uninstall.php')) {
+            return false;
+        }
+
+        return parent::uninstall();
     }
 
     // =========================
