@@ -33,8 +33,34 @@ class ProductBadges extends Module
             return false;
         }
 
+        if (!$this->installTab()) {
+            return false;
+        }
+
         return $this->registerHook('displayProductListFunctionalButtons')
             && $this->registerHook('displayHeader');
+    }
+
+    public function installTab()
+    {
+        $idTab = (int) Tab::getIdFromClassName('AdminProductBadges');
+
+        if ($idTab) {
+            return true;
+        }
+
+        $tab = new Tab();
+
+        $tab->class_name = 'AdminProductBadges';
+        $tab->module = $this->name;
+        $tab->active = 1;
+        $tab->id_parent = (int) Tab::getIdFromClassName('AdminCatalog');
+
+        foreach (Language::getLanguages(true) as $lang) {
+            $tab->name[$lang['id_lang']] = 'Product Badges';
+        }
+
+        return $tab->add();
     }
 
     public function uninstall()
@@ -43,7 +69,20 @@ class ProductBadges extends Module
             return false;
         }
 
-        return parent::uninstall();
+        return $this->uninstallTab() &&  
+            parent::uninstall();
+    }
+
+    public function uninstallTab()
+    {
+        $idTab = (int)Tab::getIdFromClassName('AdminProductBadges');
+
+        if ($idTab) {
+            $tab = new Tab($idTab);
+            return $tab->delete();
+        }
+
+        return true;
     }
 
     // =========================
@@ -72,6 +111,7 @@ class ProductBadges extends Module
             'activeBadges' => $activeBadges,
             'inactiveBadges' => $inactiveBadges,
             'badges' => $badges,
+            'addBadgeUrl' => $this->context->link->getAdminLink('AdminProductBadges') . '&addproduct_badges',
         ]);
 
         return $this->display(

@@ -48,6 +48,9 @@ class AdminProductBadgesController extends ModuleAdminController
                 'type' => 'datetime',
             ],
         ];
+
+        $this->addRowAction('edit');
+        $this->addRowAction('delete');
     }
 
     public function renderForm()
@@ -132,4 +135,5 @@ class AdminProductBadgesController extends ModuleAdminController
 
         return parent::renderForm();
     }
+
 }
