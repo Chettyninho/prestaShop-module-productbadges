@@ -5,7 +5,7 @@ $sql = [];
 $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'product_badges` (
     `id_badge` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL,
-    `label` VARCHAR(255) NOT NULL,1
+    `label` VARCHAR(255) NOT NULL,
     `type` VARCHAR(50) NOT NULL DEFAULT \'manual\',
     `color` VARCHAR(20) DEFAULT \'#f27536\',
     `active` TINYINT(1) NOT NULL DEFAULT 1,
