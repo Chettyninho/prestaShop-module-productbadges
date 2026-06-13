@@ -23,5 +23,4 @@
     </div>
 
 </div>
-    {include file="./newBadge.tpl"}
 </div>

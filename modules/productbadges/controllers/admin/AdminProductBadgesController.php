@@ -13,7 +13,6 @@ class AdminProductBadgesController extends ModuleAdminController
         $this->table = 'product_badges';
         $this->className = 'ProductBadge';
         $this->identifier = 'id_badge';
-
         $this->bootstrap = true;
         $this->lang = false;
 
@@ -48,6 +47,8 @@ class AdminProductBadgesController extends ModuleAdminController
                 'type' => 'datetime',
             ],
         ];
+
+
 
         $this->addRowAction('edit');
         $this->addRowAction('delete');
@@ -136,4 +137,23 @@ class AdminProductBadgesController extends ModuleAdminController
         return parent::renderForm();
     }
 
+    public function initPageHeaderToolbar()
+    {
+        parent::initPageHeaderToolbar();
+
+        $this->page_header_toolbar_btn['dashboard'] = [
+            'href' => $this->context->link->getAdminLink('AdminModules')
+                . '&configure=productbadges',
+            'desc' => $this->l('Back to dashboard'),
+            'icon' => 'process-icon-back',
+        ];
+
+        $this->page_header_toolbar_btn['new_badge'] = [
+            'href' => $this->context->link->getAdminLink('AdminProductBadges')
+                . '&addproduct_badges',
+            'desc' => $this->l('Add new badge'),
+            'icon' => 'process-icon-new',
+        ];
+    }
+    
 }

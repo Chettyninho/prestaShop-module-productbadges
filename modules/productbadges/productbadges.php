@@ -101,7 +101,7 @@ class ProductBadges extends Module
         $inactiveBadges = $totalBadges - $activeBadges;
 
         $badges = Db::getInstance()->executeS(
-            'SELECT name, type, color, active, date_add
+            'SELECT id_badge, name, type, color, active, date_add
             FROM `'._DB_PREFIX_.'product_badges`
             ORDER BY date_add DESC'
         );
@@ -111,8 +111,34 @@ class ProductBadges extends Module
             'activeBadges' => $activeBadges,
             'inactiveBadges' => $inactiveBadges,
             'badges' => $badges,
+            'mainDashboardUrl' => $this->context->link->getAdminLink('AdminDashboard'),
+            'badgesUrl' => $this->context->link->getAdminLink('AdminProductBadges'),
             'addBadgeUrl' => $this->context->link->getAdminLink('AdminProductBadges') . '&addproduct_badges',
+            'editBadgeBaseUrl' => AdminController::$currentIndex
+            . '&configure=' . $this->name,
         ]);
+
+        if (Tools::getValue('deleteBadge')) {
+            $idBadge = (int) Tools::getValue('deleteBadge');
+
+            Db::getInstance()->delete(
+                'product_badges',
+                'id_badge = '.$idBadge
+            );
+        }
+
+        if (Tools::getValue('editBadge')) {
+            $idBadge = (int) Tools::getValue('editBadge');
+
+            $badge = Db::getInstance()->getRow(
+                'SELECT * FROM `'._DB_PREFIX_.'product_badges`
+                WHERE id_badge = '.$idBadge
+            );
+
+            $this->context->smarty->assign([
+                'editingBadge' => $badge,
+            ]);
+        }
 
         return $this->display(
             __FILE__,
