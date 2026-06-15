@@ -1,7 +1,12 @@
 <div class="panel">
     <h3>Create Badge</h3>
 
-    <form method="post">
+
+<a href="{$editBadgeBaseUrl}&showForm=1&pb_tab=badges" class="btn btn-primary">
+    New Badge
+</a>
+{if $showForm}
+    <form method="post" >
 
         <div class="form-group">
             <label>Internal name</label>
@@ -72,7 +77,7 @@
 
     </form>
 </div>
-
+{/if}
 
 <br>
 <table class="table" id="product-badges-relation">
@@ -110,6 +115,7 @@
                         <td><h4 style="background:{$badge.color}; width:60px; height:20px; display:inline-block; border:1px solid #ccc;"></h4></td>
                         <td><h4>{$badge.date_add}</h4></td>
                         <td>
+                        <a href="{$editBadgeBaseUrl}&editBadge={$badge.id_badge}&showForm=1&pb_tab=badges" class="btn btn-primary"> Editttt</a>
                             <a href="{$editBadgeBaseUrl}&editBadge={$badge.id_badge}&pb_tab=badges"><button type="button" class="btn btn-primary">Edit</button></a>
                             <a href="{$editBadgeBaseUrl}&deleteBadge={$badge.id_badge}&pb_tab=badges"><button type="button" class="btn btn-secondary">Delete</button></a>
                         </td>

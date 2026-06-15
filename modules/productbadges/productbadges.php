@@ -97,6 +97,12 @@ class ProductBadges extends Module
     }
 public function getContent()
 {
+
+    $showForm = false;
+
+    if (Tools::getValue('showForm')) {
+        $showForm = true;
+    }
     // =================================
     // CREATE BADGE
     // =================================
@@ -115,6 +121,7 @@ public function getContent()
         $badge->date_upd = date('Y-m-d H:i:s');
 
         $badge->add();
+        $showForm = false;
     }
 
     // =================================
@@ -192,6 +199,7 @@ public function getContent()
         $this->context->smarty->assign([
             'editingBadge' => $badge,
         ]);
+        $showForm = true;
     }
 
     // =================================
@@ -301,6 +309,7 @@ public function getContent()
         'productOptions' => $productOptions,
 
         'activeTab' => $activeTab,
+        'showForm' => $showForm,
 
         'currentUrl' => AdminController::$currentIndex
             . '&configure=' . $this->name
