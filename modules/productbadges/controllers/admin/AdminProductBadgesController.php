@@ -1,5 +1,5 @@
 <?php
-
+require_once dirname(__FILE__) . '/../../classes/ProductBadgeProduct.php';
 if (!defined('_PS_VERSION_')) {
     exit;
 }

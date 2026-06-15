@@ -15,9 +15,13 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'product_badges` (
 ) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8mb4;';
 
 $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'product_badges_product` (
-    `id_badge` INT UNSIGNED NOT NULL,
+    `id_product_badges_product` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `id_product_badge` INT UNSIGNED NOT NULL,
     `id_product` INT UNSIGNED NOT NULL,
-    PRIMARY KEY (`id_badge`, `id_product`)
+    `date_add` DATETIME NOT NULL,
+    `date_upd` DATETIME NOT NULL,
+    PRIMARY KEY (`id_product_badges_product`),
+    UNIQUE KEY `unique_relation` (`id_product_badge`, `id_product`)
 ) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8mb4;';
 
 foreach ($sql as $query) {

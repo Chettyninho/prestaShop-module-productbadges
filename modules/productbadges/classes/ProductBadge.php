@@ -51,4 +51,19 @@ class ProductBadge extends ObjectModel
             ],
         ],
     ];
+
+    public function add($autoDate = true, $nullValues = false)
+    {
+        $this->date_add = date('Y-m-d H:i:s');
+        $this->date_upd = date('Y-m-d H:i:s');
+
+        return parent::add($autoDate, $nullValues);
+    }
+
+    public function update($nullValues = false)
+    {
+        $this->date_upd = date('Y-m-d H:i:s');
+
+        return parent::update($nullValues);
+    }
 }
