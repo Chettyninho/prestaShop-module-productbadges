@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/classes/ProductBadge.php';
+require_once __DIR__ . '/classes/ProductBadgeProduct.php';
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -99,9 +100,12 @@ public function getContent()
 {
 
     $showForm = false;
+    $showButton = true;
 
     if (Tools::getValue('showForm')) {
         $showForm = true;
+        $showButton = false;
+
     }
     // =================================
     // CREATE BADGE
@@ -109,19 +113,32 @@ public function getContent()
 
     if (Tools::isSubmit('submitBadge')) {
 
-        $badge = new ProductBadge();
+        $idBadge = (int)Tools::getValue('id_badge');
+
+        if ($idBadge) {
+            $badge = new ProductBadge($idBadge);
+        } else {
+            $badge = new ProductBadge();
+        }
 
         $badge->name = Tools::getValue('name');
         $badge->label = Tools::getValue('label');
         $badge->type = Tools::getValue('type');
         $badge->color = Tools::getValue('color');
-        $badge->active = (int) Tools::getValue('active');
+        $badge->active = (int)Tools::getValue('active');
 
-        $badge->date_add = date('Y-m-d H:i:s');
-        $badge->date_upd = date('Y-m-d H:i:s');
+        if ($idBadge) {
+            $badge->update();
+        } else {
+            $badge->add();
+        }
 
-        $badge->add();
-        $showForm = false;
+        Tools::redirectAdmin(
+            AdminController::$currentIndex
+            .'&configure='.$this->name
+            .'&pb_tab=badges'
+            .'&token='.Tools::getAdminTokenLite('AdminModules')
+        );
     }
 
     // =================================
@@ -130,27 +147,24 @@ public function getContent()
 
     if (Tools::isSubmit('submitAssignment')) {
 
-        $idBadge = (int) Tools::getValue('id_product_badge');
+        $idBadge = (int) Tools::getValue('id_badge');
         $idProduct = (int) Tools::getValue('id_product');
 
-        $exists = Db::getInstance()->getValue(
-            'SELECT COUNT(*)
-            FROM `'._DB_PREFIX_.'product_badges_product`
-            WHERE id_product_badge = '.$idBadge.'
-            AND id_product = '.$idProduct
-        );
-
-        if (!$exists) {
-
-            $assignment = new ProductBadgeProduct();
-
-            $assignment->id_product_badge = $idBadge;
-            $assignment->id_product = $idProduct;
-
-            $assignment->date_add = date('Y-m-d H:i:s');
-            $assignment->date_upd = date('Y-m-d H:i:s');
-
-            $assignment->add();
+        if ($idBadge && $idProduct) {
+            if (ProductBadgeProduct::relationExists($idBadge, $idProduct)) {
+                $this->context->controller->errors[] = $this->l('This assignment already exists.');
+            } else {
+                if (ProductBadgeProduct::assignBadgeToProduct($idBadge, $idProduct)) {
+                    Tools::redirectAdmin(
+                        AdminController::$currentIndex
+                        . '&configure=' . $this->name
+                        . '&pb_tab=assignments'
+                        . '&token=' . Tools::getAdminTokenLite('AdminModules')
+                    );
+                } else {
+                    $this->context->controller->errors[] = $this->l('Error creating assignment.');
+                }
+            }
         }
     }
 
@@ -178,7 +192,14 @@ public function getContent()
 
         Db::getInstance()->delete(
             'product_badges_product',
-            'id_product_badges_product = '.$idAssign
+            'id_product_badges_product = '.(int)$idAssign
+        );
+
+        Tools::redirectAdmin(
+            AdminController::$currentIndex
+            . '&configure=' . $this->name
+            . '&pb_tab=assignments'
+            . '&token=' . Tools::getAdminTokenLite('AdminModules')
         );
     }
 
@@ -200,6 +221,8 @@ public function getContent()
             'editingBadge' => $badge,
         ]);
         $showForm = true;
+        $showButton = false;
+
     }
 
     // =================================
@@ -249,14 +272,17 @@ public function getContent()
     $assignments = Db::getInstance()->executeS(
         'SELECT
             pbp.id_product_badges_product,
+            pb.id_badge,
             pb.name AS badge_name,
+            pb.label AS badge_label,
             pb.type AS badge_type,
+            pb.color,
             pl.name AS product_name,
             pbp.date_add
         FROM `'._DB_PREFIX_.'product_badges_product` pbp
 
         LEFT JOIN `'._DB_PREFIX_.'product_badges` pb
-            ON pbp.id_product_badge = pb.id_badge
+            ON pbp.id_badge = pb.id_badge
 
         LEFT JOIN `'._DB_PREFIX_.'product_lang` pl
             ON pbp.id_product = pl.id_product
@@ -310,7 +336,7 @@ public function getContent()
 
         'activeTab' => $activeTab,
         'showForm' => $showForm,
-
+        'showButton' => $showButton,
         'currentUrl' => AdminController::$currentIndex
             . '&configure=' . $this->name
             . '&token=' . Tools::getAdminTokenLite('AdminModules'),

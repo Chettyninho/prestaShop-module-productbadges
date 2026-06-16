@@ -39,7 +39,7 @@ class AdminProductBadgesAsignController extends ModuleAdminController
 
         $this->_select = 'pb.name AS badge_name, pl.name AS product_name';
         $this->_join = 'LEFT JOIN '._DB_PREFIX_.'product_badges pb
-                            ON a.id_product_badge = pb.id_badge '
+                            ON a.id_badge = pb.id_badge '
                             . 'LEFT JOIN '._DB_PREFIX_.'product_lang pl
                             ON a.id_product = pl.id_product
                             AND pl.id_lang = '.(int)$this->context->language->id.'
@@ -61,14 +61,14 @@ class AdminProductBadgesAsignController extends ModuleAdminController
     {
         $this->fields_form = [
             'legend' => [
-                'title' => $this->l('Asign badge to product'),
+                'title' => $this->l('Assign badge to product'),
                 'icon' => 'icon-tag',
             ],
             'input' => [
                 [
                     'type' => 'select',
                     'label' => $this->l('Badge'),
-                    'name' => 'id_product_badge',
+                    'name' => 'id_badge',
                     'required' => true,
                     'options' => [
                         'query' => $this->getBadgeOptions(),
@@ -89,7 +89,7 @@ class AdminProductBadgesAsignController extends ModuleAdminController
                 ],
             ],
             'submit' => [
-                'title' => $this->l('Guardar'),
+                'title' => $this->l('Save'),
             ],
         ];
 
