@@ -147,7 +147,7 @@ public function getContent()
 
     if (Tools::isSubmit('submitAssignment')) {
 
-        $idBadge = (int) Tools::getValue('id_badge');
+        $idBadge = (int) Tools::getValue('id_product_badge');
         $idProduct = (int) Tools::getValue('id_product');
 
         if ($idBadge && $idProduct) {
@@ -282,7 +282,7 @@ public function getContent()
         FROM `'._DB_PREFIX_.'product_badges_product` pbp
 
         LEFT JOIN `'._DB_PREFIX_.'product_badges` pb
-            ON pbp.id_badge = pb.id_badge
+            ON pbp.id_product_badge = pb.id_badge
 
         LEFT JOIN `'._DB_PREFIX_.'product_lang` pl
             ON pbp.id_product = pl.id_product

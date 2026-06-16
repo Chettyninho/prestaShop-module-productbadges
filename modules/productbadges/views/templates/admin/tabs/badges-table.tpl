@@ -1,6 +1,3 @@
-
-
-
 <div class="panel">
     <h3>Assign Badge</h3>
 

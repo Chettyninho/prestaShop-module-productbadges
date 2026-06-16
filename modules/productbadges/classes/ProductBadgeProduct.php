@@ -7,7 +7,7 @@ if (!defined('_PS_VERSION_')) {
 class ProductBadgeProduct extends ObjectModel
 {
     public $id_product_badges_product;
-    public $id_badge;
+    public $id_product_badge;
     public $id_product;
     public $date_add;
     public $date_upd;
@@ -16,7 +16,7 @@ class ProductBadgeProduct extends ObjectModel
         'table' => 'product_badges_product',
         'primary' => 'id_product_badges_product',
         'fields' => [
-            'id_badge' => [
+            'id_product_badge' => [
                 'type' => self::TYPE_INT,
                 'validate' => 'isUnsignedId',
                 'required' => true,
@@ -63,7 +63,7 @@ class ProductBadgeProduct extends ObjectModel
         $sql = 'SELECT pb.*, pbp.date_add as assigned_date
                 FROM `'._DB_PREFIX_.'product_badges_product` pbp
                 INNER JOIN `'._DB_PREFIX_.'product_badges` pb 
-                    ON pbp.id_badge = pb.id_badge
+                    ON pbp.id_product_badge = pb.id_badge
                 WHERE pbp.id_product = '.(int)$idProduct;
 
         if ($active) {
@@ -89,7 +89,7 @@ class ProductBadgeProduct extends ObjectModel
                 LEFT JOIN `'._DB_PREFIX_.'product_lang` pl
                     ON p.id_product = pl.id_product
                     AND pl.id_lang = '.(int)Context::getContext()->language->id.'
-                WHERE pbp.id_badge = '.(int)$idBadge.'
+                WHERE pbp.id_product_badge = '.(int)$idBadge.'
                 ORDER BY pl.name ASC';
 
         return Db::getInstance()->executeS($sql);
@@ -106,7 +106,7 @@ class ProductBadgeProduct extends ObjectModel
         $count = Db::getInstance()->getValue(
             'SELECT COUNT(*)
             FROM `'._DB_PREFIX_.'product_badges_product`
-            WHERE id_badge = '.(int)$idBadge.'
+            WHERE id_product_badge = '.(int)$idBadge.'
             AND id_product = '.(int)$idProduct
         );
 
@@ -126,7 +126,7 @@ class ProductBadgeProduct extends ObjectModel
         }
 
         $assignment = new self();
-        $assignment->id_badge = (int)$idBadge;
+        $assignment->id_product_badge = (int)$idBadge;
         $assignment->id_product = (int)$idProduct;
 
         return $assignment->add();
@@ -142,7 +142,7 @@ class ProductBadgeProduct extends ObjectModel
     {
         return Db::getInstance()->delete(
             'product_badges_product',
-            'id_badge = '.(int)$idBadge.' AND id_product = '.(int)$idProduct
+            'id_product_badge = '.(int)$idBadge.' AND id_product = '.(int)$idProduct
         );
     }
 
@@ -160,7 +160,7 @@ class ProductBadgeProduct extends ObjectModel
                        pbp.date_add, pbp.date_upd
                 FROM `'._DB_PREFIX_.'product_badges_product` pbp
                 INNER JOIN `'._DB_PREFIX_.'product_badges` pb 
-                    ON pbp.id_badge = pb.id_badge
+                    ON pbp.id_product_badge = pb.id_badge
                 INNER JOIN `'._DB_PREFIX_.'product` p 
                     ON pbp.id_product = p.id_product
                 LEFT JOIN `'._DB_PREFIX_.'product_lang` pl
