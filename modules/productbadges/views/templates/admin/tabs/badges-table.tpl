@@ -1,5 +1,19 @@
-<div class="panel">
+{if isset($editingAssignment)}
+<style>
+.assignment-editing {
+    border: 2px solid #f0ad4e;
+    box-shadow: 0 0 10px rgba(240,173,78,.3);
+}
+</style>
+{/if}
+<div class="panel {if isset($editingAssignment)}panel-warning{/if}">
     <h3>Assign Badge</h3>
+    {if isset($editingAssignment)}
+        <div class="alert alert-warning">
+            <strong>Editing assignment</strong><br>
+            You are modifying an existing Product ↔ Badge relation.
+        </div>
+    {/if}
 
     <form method="post">
 
