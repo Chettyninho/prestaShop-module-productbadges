@@ -158,7 +158,7 @@ public function getContent()
                     Tools::redirectAdmin(
                         AdminController::$currentIndex
                         . '&configure=' . $this->name
-                        . '&pb_tab=assignments'
+                        . '&pb_tab=dashboard'
                         . '&token=' . Tools::getAdminTokenLite('AdminModules')
                     );
                 } else {
@@ -198,7 +198,53 @@ public function getContent()
         Tools::redirectAdmin(
             AdminController::$currentIndex
             . '&configure=' . $this->name
-            . '&pb_tab=assignments'
+            . '&pb_tab=dashboard'
+            . '&token=' . Tools::getAdminTokenLite('AdminModules')
+        );
+    }
+
+    // =================================
+    // EDIT ASSIGNMENT
+    // =================================
+
+    if (Tools::getValue('editAssignment')) {
+
+        $idAssign = (int) Tools::getValue('editAssignment');
+
+        $assignment = Db::getInstance()->getRow(
+            'SELECT *
+            FROM `'._DB_PREFIX_.'product_badges_product`
+            WHERE id_product_badges_product = '.$idAssign
+        );
+
+        $this->context->smarty->assign([
+            'editingAssignment' => $assignment,
+        ]);
+
+    }
+
+    // =================================
+    // UPDATE ASSIGNMENT
+    // =================================
+
+    if (Tools::isSubmit('updateAssignment')) {
+
+        $idAssign = (int) Tools::getValue('id_assignment');
+
+        Db::getInstance()->update(
+            'product_badges_product',
+            [
+                'id_product_badge' => (int) Tools::getValue('id_product_badge'),
+                'id_product' => (int) Tools::getValue('id_product'),
+                'date_upd' => date('Y-m-d H:i:s'),
+            ],
+            'id_product_badges_product = '.$idAssign
+        );
+
+        Tools::redirectAdmin(
+            AdminController::$currentIndex
+            . '&configure=' . $this->name
+            . '&pb_tab=dashboard'
             . '&token=' . Tools::getAdminTokenLite('AdminModules')
         );
     }

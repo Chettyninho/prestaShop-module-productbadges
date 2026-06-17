@@ -3,6 +3,13 @@
 
     <form method="post">
 
+        {if isset($editingAssignment)}
+            <input
+                type="hidden"
+                name="id_assignment"
+                value="{$editingAssignment.id_product_badges_product}">
+        {/if}
+
         <div class="form-group">
             <label>Badge</label>
 
@@ -14,7 +21,10 @@
                 <option value="">Select badge</option>
 
                 {foreach $badgeOptions as $badge}
-                    <option value="{$badge.id_badge}">
+                    <option value="{$badge.id_badge}"
+                        {if isset($editingAssignment) && $editingAssignment.id_product_badge == $badge.id_badge}
+                            selected="selected"
+                        {/if}>
                         {$badge.name}
                     </option>
                 {/foreach}
@@ -33,7 +43,10 @@
                 <option value="">Select product</option>
 
                 {foreach $productOptions as $product}
-                    <option value="{$product.id_product}">
+                    <option value="{$product.id_product}"
+                        {if isset($editingAssignment) && $editingAssignment.id_product == $product.id_product}
+                            selected="selected"
+                        {/if}>
                         {$product.name}
                     </option>
                 {/foreach}
@@ -43,10 +56,15 @@
 
         <button
             type="submit"
-            name="submitAssignment"
-            class="btn btn-primary"
-        >
-            Assign Badge
+            name="{if isset($editingAssignment)}updateAssignment{else}submitAssignment{/if}"
+            class="btn btn-primary">
+
+            {if isset($editingAssignment)}
+                Update Assignment
+            {else}
+                Assign Badge
+            {/if}
+
         </button>
 
     </form>

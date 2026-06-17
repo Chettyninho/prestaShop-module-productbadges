@@ -57,12 +57,12 @@
                         </td>
 
                         <td class="text-right">
-                            <a href="{$editBadgeBaseUrl}&editBadge={$assignment.id_badge}"
+                            <a href="{$editBadgeBaseUrl}&editAssignment={$assignment.id_product_badges_product}"
                                class="btn btn-default">
                                 <i class="icon-pencil"></i>
                             </a>
 
-                            <a href="{$editBadgeBaseUrl}&deleteBadge={$assignment.id_badge}"
+                            <a href="{$editBadgeBaseUrl}&deleteAssignment={$assignment.id_product_badges_product}"
                                class="btn btn-danger">
                                 <i class="icon-trash"></i>
                             </a>
