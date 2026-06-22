@@ -11,9 +11,20 @@ class ProductBadge extends ObjectModel
     public $type;
     public $color;
     public $active;
+    public $days_threshold;
+    public $stock_threshold;
+
+    public $discount_value;
+    public $discount_mode;
+
+    public $start_date;
+    public $end_date;
+
+    public $auto_apply;
     public $date_add;
     public $date_upd;
 
+    
     public static $definition = [
         'table' => 'product_badges',
         'primary' => 'id_badge',
@@ -38,6 +49,40 @@ class ProductBadge extends ObjectModel
                 'size' => 20,
             ],
             'active' => [
+                'type' => self::TYPE_BOOL,
+                'validate' => 'isBool',
+            ],
+
+            'days_threshold' => [
+                'type' => self::TYPE_INT,
+                'validate' => 'isUnsignedInt',
+            ],
+
+            'stock_threshold' => [
+                'type' => self::TYPE_INT,
+                'validate' => 'isUnsignedInt',
+            ],
+
+            'discount_value' => [
+                'type' => self::TYPE_FLOAT,
+            ],
+
+            'discount_mode' => [
+                'type' => self::TYPE_STRING,
+                'size' => 20,
+            ],
+
+            'start_date' => [
+                'type' => self::TYPE_DATE,
+                'validate' => 'isDate',
+            ],
+
+            'end_date' => [
+                'type' => self::TYPE_DATE,
+                'validate' => 'isDate',
+            ],
+
+            'auto_apply' => [
                 'type' => self::TYPE_BOOL,
                 'validate' => 'isBool',
             ],

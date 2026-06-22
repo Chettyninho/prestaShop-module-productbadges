@@ -61,11 +61,11 @@
             >
                 <option value="manual"
                     {if isset($editingBadge) && $editingBadge.type == 'manual'}selected{/if}>
-                    Manual
+                    Custom
                 </option>
 
-                <option value="new"
-                    {if isset($editingBadge) && $editingBadge.type == 'new'}selected{/if}>
+                <option value="new_product"
+                    {if isset($editingBadge) && $editingBadge.type == 'new_product'}selected{/if}>
                     New product
                 </option>
 
@@ -74,7 +74,7 @@
                     Low stock
                 </option>
 
-                <option value="discount"
+                <option value="discount" 
                     {if isset($editingBadge) && $editingBadge.type == 'discount'}selected{/if}>
                     Discount
                 </option>
@@ -85,6 +85,95 @@
                 </option>
             </select>
         </div>
+
+            <!-- Selectores -->
+            <div id="badge-config-new-product" class="badge-config-block">
+        <div class="form-group">
+            <label>Days since creation</label>
+
+            <input
+                type="number"
+                name="days_threshold"
+                class="form-control"
+                min="1"
+                value="{$editingBadge.days_threshold|default:'30'}"
+            >
+        </div>
+    </div>
+
+    <div id="badge-config-low-stock" class="badge-config-block">
+        <div class="form-group">
+            <label>Stock threshold</label>
+
+            <input
+                type="number"
+                name="stock_threshold"
+                class="form-control"
+                min="1"
+                value="{$editingBadge.stock_threshold|default:'5'}"
+            >
+        </div>
+    </div>
+
+    <div id="badge-config-discount" class="badge-config-block">
+
+        <div class="form-group">
+            <label>Discount mode</label>
+
+            <select
+                name="discount_mode"
+                class="form-control"
+            >
+                <option value="percentage"
+                    {if isset($editingBadge) && $editingBadge.discount_mode == 'percentage'}selected{/if}>
+                    Percentage
+                </option>
+
+                <option value="fixed"
+                    {if isset($editingBadge) && $editingBadge.discount_mode == 'fixed'}selected{/if}>
+                    Fixed amount
+                </option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Discount value</label>
+
+            <input
+                type="number"
+                name="discount_value"
+                step="0.01"
+                min="0"
+                class="form-control"
+                value="{$editingBadge.discount_value|default:''}"
+            >
+        </div>
+    </div>
+
+    <div id="badge-config-limited-time" class="badge-config-block">
+
+        <div class="form-group">
+            <label>Start date</label>
+
+            <input
+                type="date"
+                name="start_date"
+                class="form-control"
+                value="{$editingBadge.start_date|default:''}"
+            >
+        </div>
+
+        <div class="form-group">
+            <label>End date</label>
+
+            <input
+                type="date"
+                name="end_date"
+                class="form-control"
+                value="{$editingBadge.end_date|default:''}"
+            >
+        </div>
+    </div>
 
         <div class="form-group">
             <label>Color</label>
@@ -146,11 +235,12 @@
 <table class="table" id="product-badges-relation">
     <thead>
         <tr>
-            <th><strong>Product ID</strong></th>
-            <th><strong>Product Name</strong></th>
+            <th><strong>Badge ID</strong></th>
             <th><strong>Badge Name</strong></th>
             <th><strong>Badge Type</strong></th>
+            <th><strong>Color Badge</strong></th>
             <th><strong>Date</strong></th>
+            <th><strong>State</strong></th>
             <th><strong>Action</strong></th>
         </tr>
     </thead>
@@ -178,7 +268,29 @@
                         <td><h4 style="background:{$badge.color}; width:60px; height:20px; display:inline-block; border:1px solid #ccc;"></h4></td>
                         <td><h4>{$badge.date_add}</h4></td>
                         <td>
-                        <a href="{$editBadgeBaseUrl}&editBadge={$badge.id_badge}&showForm=1&pb_tab=badges" class="btn btn-primary"> Edit</a>
+                            <a href="{$editBadgeBaseUrl}&toggleBadge={$badge.id_badge}&pb_tab=badges">
+
+                                <div class="switch-button">
+
+                                    <input
+                                        type="checkbox"
+                                        class="switch-button__checkbox"
+                                        id="switch-label-{$badge.id_badge}"
+                                        {if $badge.active}checked{/if}
+                                        disabled
+                                    >
+
+                                    <label
+                                        for="switch-label-{$badge.id_badge}"
+                                        class="switch-button__label"
+                                    ></label>
+
+                                </div>
+
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{$editBadgeBaseUrl}&editBadge={$badge.id_badge}&showForm=1&pb_tab=badges" class="btn btn-primary"> Edit</a>
                             <a href="{$editBadgeBaseUrl}&deleteBadge={$badge.id_badge}&pb_tab=badges"><button type="button" class="btn btn-secondary">Delete</button></a>
                         </td>
                     </tr>
@@ -190,3 +302,48 @@
             {/if}
     </tbody>
 </table>
+<style>
+.badge-config-block {
+    display: none;
+}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+    const typeSelect = document.querySelector('select[name="type"]');
+
+    if (!typeSelect) {
+        return;
+    }
+
+    function updateBadgeConfig() {
+
+        document.querySelectorAll('.badge-config-block').forEach(function(el) {
+            el.style.display = 'none';
+        });
+
+        switch(typeSelect.value) {
+
+            case 'new_product':
+                document.getElementById('badge-config-new-product').style.display = 'block';
+                break;
+
+            case 'low_stock':
+                document.getElementById('badge-config-low-stock').style.display = 'block';
+                break;
+
+            case 'discount':
+                document.getElementById('badge-config-discount').style.display = 'block';
+                break;
+
+            case 'limited_time':
+                document.getElementById('badge-config-limited-time').style.display = 'block';
+                break;
+        }
+    }
+
+    typeSelect.addEventListener('change', updateBadgeConfig);
+
+    updateBadgeConfig();
+});
+</script>

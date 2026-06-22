@@ -129,11 +129,40 @@ public function getContent()
         $badge->type = Tools::getValue('type');
         $badge->color = Tools::getValue('color');
         $badge->active = (int)Tools::getValue('active');
+        $badge->days_threshold = Tools::getValue('days_threshold');
+        $badge->stock_threshold = Tools::getValue('stock_threshold');
+
+        $badge->discount_value = Tools::getValue('discount_value');
+        $badge->discount_mode = Tools::getValue('discount_mode');
+
+        $badge->start_date = Tools::getValue('start_date');
+        $badge->end_date = Tools::getValue('end_date');
+        $badge->auto_apply = (int)Tools::getValue('auto_apply');
 
         if ($idBadge) {
             $badge->update();
         } else {
             $badge->add();
+        }
+
+        if (Tools::getValue('toggleBadge')) {
+
+            $badge = new ProductBadge(
+                (int)Tools::getValue('toggleBadge')
+            );
+
+            if (Validate::isLoadedObject($badge)) {
+
+                $badge->active = !$badge->active;
+                $badge->update();
+            }
+
+            Tools::redirectAdmin(
+                AdminController::$currentIndex
+                .'&configure='.$this->name
+                .'&pb_tab=badges'
+                .'&token='.Tools::getAdminTokenLite('AdminModules')
+            );
         }
 
         Tools::redirectAdmin(
