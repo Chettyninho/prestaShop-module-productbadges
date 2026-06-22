@@ -39,6 +39,9 @@ class ProductBadges extends Module
         }
 
         return $this->registerHook('displayProductListFunctionalButtons')
+            && $this->registerHook('displayFooterProduct')
+            && $this->registerHook('displayProductAdditionalInfo')
+            && $this->registerHook('displayProductListReviews')
             && $this->registerHook('displayHeader');
     }
 
@@ -399,15 +402,115 @@ public function getContent()
 }
 
     // =========================
+    // FRONT OFFICE HELPERS
+    // =========================
+    protected function getProductIdFromParams($params = [])
+    {
+        if (isset($params['product'])) {
+            $product = $params['product'];
+
+            if (is_object($product)) {
+                if (isset($product->id_product)) {
+                    return (int)$product->id_product;
+                }
+                if (isset($product->id)) {
+                    return (int)$product->id;
+                }
+            } elseif (is_array($product)) {
+                if (isset($product['id_product'])) {
+                    return (int)$product['id_product'];
+                }
+                if (isset($product['id'])) {
+                    return (int)$product['id'];
+                }
+            }
+        }
+
+        if (isset($params['id_product'])) {
+            return (int)$params['id_product'];
+        }
+
+        if (isset($this->context->controller->product->id)) {
+            return (int)$this->context->controller->product->id;
+        }
+
+        return 0;
+    }
+
+    protected function getProductBadgesByParams($params = [])
+    {
+        $productId = $this->getProductIdFromParams($params);
+        if (!$productId) {
+            return [];
+        }
+
+        return ProductBadgeProduct::getBadgesByProduct($productId, true);
+    }
+
+    protected function renderProductBadges($params, $template)
+    {
+        $productBadges = $this->getProductBadgesByParams($params);
+        if (empty($productBadges)) {
+            return '';
+        }
+
+        $this->context->smarty->assign([
+            'productBadges' => $productBadges,
+        ]);
+
+        return $this->display(__FILE__, $template);
+    }
+
+    public function hookDisplayProductListReviews($params)
+    {
+       return $this->renderProductBadges(
+           $params,
+           'views/templates/hook/displayProductListReviews.tpl'
+       );
+    }
+    public function hookDisplayProductListFunctionalButtons($params)
+    {
+        return '<div style="background:red;color:white;padding:5px;">BADGE LISTADO</div>';
+    
+    // return $this->renderProductBadges($params, 'views/templates/hook/displayProductListFunctionalButtons.tpl');
+    }
+
+    public function hookDisplayFooterProduct($params)
+    {
+        return $this->renderProductBadges($params, 'views/templates/hook/displayFooterProduct.tpl');
+    }
+
+    public function hookDisplayProductAdditionalInfo($params)
+    {
+        return $this->renderProductBadges($params, 'views/templates/hook/displayFooterProduct.tpl');
+    }
+
+    // =========================
     // FRONT OFFICE CSS
     // =========================
     public function hookDisplayHeader()
     {
+
         $this->context->controller->registerStylesheet(
             'productbadges-css',
             'modules/' . $this->name . '/views/css/productbadge_admin.css',
+            'productbadges-front',
+            'modules/'.$this->name.'/views/css/front.css',
             ['media' => 'all', 'priority' => 150]
         );
-    }
+
+        $this->context->controller->registerJavascript(
+            'productbadges-cart',
+            'modules/'.$this->name.'/views/js/cart-badges.js',
+            [
+                'position' => 'bottom',
+                'priority' => 150,
+            ]
+        );
+
+        Media::addJsDef([
+            'productBadgesData' => ProductBadgeProduct::getAllProductsBadges(),
+        ]);
+        }
 
 }

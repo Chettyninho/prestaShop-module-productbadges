@@ -172,6 +172,32 @@ class ProductBadgeProduct extends ObjectModel
         return Db::getInstance()->executeS($sql);
     }
 
+    public static function getAllProductsBadges()
+{
+    $sql = 'SELECT
+                pbp.id_product,
+                pb.label,
+                pb.color
+            FROM `'._DB_PREFIX_.'product_badges_product` pbp
+            INNER JOIN `'._DB_PREFIX_.'product_badges` pb
+                ON pbp.id_product_badge = pb.id_badge
+            WHERE pb.active = 1
+            ORDER BY pb.name ASC';
+
+    $rows = Db::getInstance()->executeS($sql);
+
+    $result = [];
+
+    foreach ($rows as $row) {
+        $result[(int)$row['id_product']][] = [
+            'label' => $row['label'],
+            'color' => $row['color'],
+        ];
+    }
+
+    return $result;
+}
+
     /**
      * Cuenta el total de asignaciones
      * @return int
