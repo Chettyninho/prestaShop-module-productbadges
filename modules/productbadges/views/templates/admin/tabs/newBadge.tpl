@@ -61,7 +61,7 @@
             >
                 <option value="manual"
                     {if isset($editingBadge) && $editingBadge.type == 'manual'}selected{/if}>
-                    Custom
+                    Manual
                 </option>
 
                 <option value="new_product"
