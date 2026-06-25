@@ -10,6 +10,7 @@ class ProductBadgeProduct extends ObjectModel
     public $id_product;
     public $date_add;
     public $date_upd;
+    public $id_specific_price;
 
     public static $definition = [
         'table' => 'product_badges_product',
@@ -19,6 +20,7 @@ class ProductBadgeProduct extends ObjectModel
             'id_product' => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => true],
             'date_add' => ['type' => self::TYPE_DATE, 'validate' => 'isDate'],
             'date_upd' => ['type' => self::TYPE_DATE, 'validate' => 'isDate'],
+            'id_specific_price' => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => false],
         ],
     ];
 }

@@ -113,25 +113,29 @@ class ProductBadgeProduct extends ObjectModel
         return (bool)$count;
     }
 
-    /**
-     * Asigna una badge a un producto
-     * @param int $idBadge ID de la badge
-     * @param int $idProduct ID del producto
-     * @return bool
-     */
-    public static function assignBadgeToProduct($idBadge, $idProduct)
-    {
-        if (self::relationExists($idBadge, $idProduct)) {
-            return false;
-        }
-
-        $assignment = new self();
-        $assignment->id_product_badge = (int)$idBadge;
-        $assignment->id_product = (int)$idProduct;
-
-        return $assignment->add();
+/**
+ * Asigna una badge a un producto
+ *
+ * @param int $idBadge
+ * @param int $idProduct
+ * @return ProductBadgeProduct|false
+ */
+public static function assignBadgeToProduct($idBadge, $idProduct)
+{
+    if (self::relationExists($idBadge, $idProduct)) {
+        return false;
     }
 
+    $assignment = new self();
+    $assignment->id_product_badge = (int)$idBadge;
+    $assignment->id_product = (int)$idProduct;
+
+    if ($assignment->add()) {
+        return $assignment;
+    }
+
+    return false;
+}
     /**
      * Desasigna una badge de un producto
      * @param int $idBadge ID de la badge

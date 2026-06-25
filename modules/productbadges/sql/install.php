@@ -21,6 +21,7 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'product_badges` (
     `auto_apply` TINYINT(1) DEFAULT 0,
     `date_add` DATETIME NOT NULL,
     `date_upd` DATETIME NOT NULL,
+
     PRIMARY KEY (`id_badge`)
 ) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8mb4;';
 
@@ -30,6 +31,8 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'product_badges_product` (
     `id_product` INT UNSIGNED NOT NULL,
     `date_add` DATETIME NOT NULL,
     `date_upd` DATETIME NOT NULL,
+    `id_specific_price` INT UNSIGNED NULL,
+
     PRIMARY KEY (`id_product_badges_product`),
     UNIQUE KEY `unique_relation` (`id_product_badge`, `id_product`)
 ) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8mb4;';

@@ -173,9 +173,9 @@ public function getContent()
         );
     }
 
-    // =================================
-    // CREATE ASSIGNMENT
-    // =================================
+// =================================
+// CREATE ASSIGNMENT
+// =================================
 
     if (Tools::isSubmit('submitAssignment')) {
 
@@ -183,24 +183,41 @@ public function getContent()
         $idProduct = (int) Tools::getValue('id_product');
 
         if ($idBadge && $idProduct) {
+
             if (ProductBadgeProduct::relationExists($idBadge, $idProduct)) {
+
                 $this->context->controller->errors[] = $this->l('This assignment already exists.');
+
             } else {
-                if (ProductBadgeProduct::assignBadgeToProduct($idBadge, $idProduct)) {
+
+                $assignment = ProductBadgeProduct::assignBadgeToProduct($idBadge, $idProduct);
+
+                if ($assignment) {
+
+                    $idSpecificPrice = $this->applyBadgeDiscount($idBadge, $idProduct);
+
+                    if ($idSpecificPrice) {
+                        $assignment->id_specific_price = (int)$idSpecificPrice;
+                        $assignment->update();
+                    }
+
                     Tools::redirectAdmin(
                         AdminController::$currentIndex
                         . '&configure=' . $this->name
                         . '&pb_tab=dashboard'
                         . '&token=' . Tools::getAdminTokenLite('AdminModules')
                     );
+
                 } else {
+
                     $this->context->controller->errors[] = $this->l('Error creating assignment.');
+
                 }
             }
         }
     }
 
-    // =================================
+// =================================
     // DELETE BADGE
     // =================================
 
@@ -513,6 +530,58 @@ public function getContent()
     {
         return $this->renderProductBadges($params, 'views/templates/hook/displayFooterProduct.tpl');
     }
+
+        
+    public function applyBadgeDiscount($idBadge, $idProduct)
+{
+    $badge = new ProductBadge((int)$idBadge);
+
+    if (!Validate::isLoadedObject($badge)) {
+        return false;
+    }
+
+    // Solo aplicar a badges de descuento
+    if ($badge->type != 'discount') {
+        return false;
+    }
+
+    $specificPrice = new SpecificPrice();
+
+    $specificPrice->id_product = (int)$idProduct;
+    $specificPrice->id_shop = (int)$this->context->shop->id;
+    $specificPrice->id_shop_group = 0;
+
+    $specificPrice->id_currency = 0;
+    $specificPrice->id_country = 0;
+    $specificPrice->id_group = 0;
+    $specificPrice->id_customer = 0;
+
+    $specificPrice->id_product_attribute = 0;
+
+    $specificPrice->price = -1;
+    $specificPrice->from_quantity = 1;
+
+    // Tipo de descuento
+    if ($badge->discount_mode == 'percentage') {
+        $specificPrice->reduction_type = 'percentage';
+        $specificPrice->reduction = ((float)$badge->discount_value) / 100;
+    } else {
+        $specificPrice->reduction_type = 'amount';
+        $specificPrice->reduction = (float)$badge->discount_value;
+    }
+
+    $specificPrice->reduction_tax = 1;
+
+    $specificPrice->from = '0000-00-00 00:00:00';
+    $specificPrice->to = '0000-00-00 00:00:00';
+
+    if ($specificPrice->add()) {
+        return $specificPrice->id;
+    }
+
+    return false;
+}
+
 
     // =========================
     // FRONT OFFICE CSS
